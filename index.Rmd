@@ -54,7 +54,7 @@ style_duo_accent(
 ```
 
 class: inverse, center, bottom
-background-image: url("img/DSCN1531.JPG")
+background-image: url("img/initial.JPG")
 background-position: 50% 50%
 background-size: cover
 
@@ -406,7 +406,7 @@ knitr::include_graphics("https://3.bp.blogspot.com/-feLSjKOc0nA/VspNAqbdzuI/AAAA
 
 ---
 class: inverse
-background-image: url("img/DSCN0935.JPG")
+background-image: url("img/end.JPG")
 background-position: 50% 50%
 background-size: cover
 
