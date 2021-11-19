@@ -63,7 +63,7 @@ meta() %>%
       "Explorar la autocorrelación espacial en datos provenientes de fototrampeo."
     ),
     url = "https://gpandradep.github.io/ind_spat_fototramp",
-    image = "https://github.com/gpandradep/ind_spat_fototramp/blob/master/share-card.png",
+    image = "https://gpandradep.github.io/ind_spat_fototramp/share-card.png",
     image_alt = paste(
       "Title slide of Explorando la independencia espacial:", 
       "🦌 para datos de fototrampeo 🦨,", 
