@@ -53,6 +53,31 @@ style_duo_accent(
 )
 ```
 
+```{r metathis, echo=FALSE}
+library(metathis)
+meta() %>%
+  meta_name("github-repo" = "gpandradep/ind_spat_fototramp") %>% 
+  meta_social(
+    title = "Explorando la independencia espacial",
+    description = paste(
+      "Explorar la autocorrelación espacial en datos provenientes de fototrampeo."
+    ),
+    url = "https://gpandradep.github.io/ind_spat_fototramp",
+    image = "https://github.com/gpandradep/ind_spat_fototramp/blob/master/share-card.png",
+    image_alt = paste(
+      "Title slide of Explorando la independencia espacial:", 
+      "🦌 para datos de fototrampeo 🦨,", 
+      "presented by Gabriel Andrade"
+    ),
+    og_type = "website",
+    og_author = "Gabriel Andrade",
+    twitter_card_type = "summary_large_image",
+    twitter_creator = "@Gatorco_AP",
+    twitter_site = "@Gatorco_AP"
+  )
+```
+
+
 class: inverse, center, bottom
 background-image: url("img/initial.jpg")
 background-position: 50% 50%
