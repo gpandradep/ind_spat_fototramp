@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Explorando la independencia espacial</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Gabriel Andrade Ponce" />
+    <meta name="date" content="2021-11-18" />
+    <script src="index_files/header-attrs/header-attrs.js"></script>
+    <script src="index_files/htmlwidgets/htmlwidgets.js"></script>
+    <script src="index_files/jquery/jquery.min.js"></script>
+    <link href="index_files/leaflet/leaflet.css" rel="stylesheet" />
+    <script src="index_files/leaflet/leaflet.js"></script>
+    <link href="index_files/leafletfix/leafletfix.css" rel="stylesheet" />
+    <script src="index_files/proj4/proj4.min.js"></script>
+    <script src="index_files/Proj4Leaflet/proj4leaflet.js"></script>
+    <link href="index_files/rstudio_leaflet/rstudio_leaflet.css" rel="stylesheet" />
+    <script src="index_files/leaflet-binding/leaflet.js"></script>
+    <script src="index_files/leaflet-providers/leaflet-providers_1.9.0.js"></script>
+    <script src="index_files/leaflet-providers-plugin/leaflet-providers-plugin.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+class: inverse, center, bottom
+background-image: url("img/DSCN1531.JPG")
+background-position: 50% 50%
+background-size: cover
+
+#Explorando la independencia espacial
+## 🦌 para datos de fototrampeo 🦨
+### Gabriel Andrade Ponce
+---
+
+# ¿Autocorrelación espacial (ACS)?
+
+En cualquier análisis de información espacial la ACS puede influir sobre nuestros resultados o inferencias. 
+
+**¿Qué es la ACS?**: Correlación de una variable con ella misma, dada cierta distancia espacial. [(Fortin y Dale 2005)](https://doi.org/10.1017/CBO9780511542039).
+--
+
+&lt;img src="img/fig1.png" width="50%" style="display: block; margin: auto;" /&gt;
+---
+
+## ¿ Qué puede causar ACS?
+
+### Los factores más comúnes son [(Dorman *et al.* 2007)](https://onlinelibrary.wiley.com/doi/10.1111/j.2007.0906-7590.05171.x):
+.pull-left[
+1- **Procesos biológicos**: especiación, dispersión interacciones ecológicas entre otras, son fenómenos relacionados con el espacio.
+
+2- **Especificación del muestreo**: Distancia de las unidades de muestreo respecto al movimiento de la especie (resolución o grano).
+
+3- **Especificación del modelo**: Relaciones no lineales o modelos que no incluyen una variable ambiental determinante que causa la estructura espacial de la variable de interés.]
+
+.pull-right[
+
+&lt;img src="https://www.mdpi.com/entropy/entropy-22-00440/article_deploy/html/images/entropy-22-00440-g001.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+---
+class: inverse, center
+
+## La ACS es ¿mala o buena?
+
+&lt;img src="https://c.tenor.com/EHVGbpNqP2oAAAAd/todo-depende-del-cristal-del-cual-se-mira-tadeo.gif" width="40%" /&gt;
+
+---
+class: inverse, center
+
+## La ACS es ¿ mala o buena ?
+
+.pull-left[
+### Buena
+Si tu pregunta ecológica se relaciona con el espacio explicitamente. Entonces la autocorrelación espacial ayudará a informar sobre cómo ocurren los procesos ecológicos en el espacio.
+
+&lt;img src="http://creemmural.org/images/leopardarea.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+]
+.pull-right[
+### No tan buena
+
+Es un gran problema para la prueba estadística de hipótesis y para las predicciones de las mismas, porque viola el supuesto (de casi todas las pruebas) de independencia. Lo que nos puede llevar a cometer errores  **.white[Tipo I]** o incluso invertir la relación de la pendiente en algunos análisis.
+
+&lt;img src="img/erroresTipoIyII.png" width="30%" /&gt;
+
+
+]
+---
+
+## Detectar y cuantificar la ACS
+
+El primer paso antes de empezar con pruebas o modelos más complejos para lidiar con la ACS, es identificar si es en efecto un problema.
+.pull-left[
+### Nota
+- 1- Si se realizan pruebas que asumen independencia, pero no son regresiones. La ACS debe verificarse en los datos "crudos". Ej. pruebas de t, patrones de actividad, entre otras.
+
+- 2- En regresiones donde se modela el efecto de posibles variables ambientales, la ACS se debe verificar en los residuales.
+]
+.pull-right[
+
+### Procedimientos
+
+Existen diversos procedimientos, pero los más comúnes son la **I de Moran** o correlograma de Moran y los **semi-variogramas**.
+
+Para este ejercicio usaremos los correlogramas de Moran, pero recomiendo que exploren las ventajas que puede ofrecer un semi-variograma.
+
+]
+---
+class: inverse, center
+
+## Estudio de caso
+
+Tenemos un muestreo de cámaras trampa en agrupamientos, con una distancia mínima de ~ 500m. Cualquier director o fototrampero te diría que a esta distancia no hay independencia espacial. Particularmente, para especies grandes y que se mueven mucho.
+
+
+<div id="htmlwidget-c8005e44407f799f42cf" style="width:100%;height:60%;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c8005e44407f799f42cf">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["Esri.WorldImagery",null,"Satellite",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addProviderTiles","args":["Esri.WorldTopoMap",null,"Base",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircleMarkers","args":[[18.169729357819,18.1671553340643,18.1645903446828,18.1734411191615,18.1708761696209,18.168302006888,18.1771529416967,18.1745878525581,18.1720137298431,18.1716255445778,18.1679852655811,18.1643448655462,18.1699052248464,18.1662649150614,18.1626336960631,18.168167347248,18.1645270966093,18.1608869025484,18.1509788175348,18.1473384559358,18.1436981514342,18.1527165820116,18.1490761614881,18.145444832236,18.1544366133934,18.1507962240511,18.1471557133625,18.1700215498407,18.1674567974395,18.1648830122441,18.1663095356832,18.1637449235902,18.1611710975448,18.1625975836062,18.1600238965439,18.1574592444833,18.1378476530348,18.1377024073131,18.1375565150117,18.1333357854933,18.133199748787,18.1330171899158,18.1288418964153,18.1287238381842,18.1286046928769,18.1496051327454,18.1469501138569,18.1444667381017,18.1458930734032,18.1433285327586,18.1407547780636,18.1421810763901,18.1396074605392,18.137042879912,18.148048669194,18.179342437897,18.1199378409962,18.1562583847567,18.1475390315424,18.1384973508139,18.1405444593392,18.1315926457456,18.1408347607936,18.1318290161557,18.1549560588459,18.1475319749909,18.1574601526836],[-97.1662960398981,-97.1701790241013,-97.1740712546344,-97.1689793227859,-97.1728717168424,-97.1767546445183,-97.171672166078,-97.1755551629562,-97.179447594555,-97.1919182146277,-97.1891202888839,-97.1863130256281,-97.1963308753628,-97.19352342553,-97.1907254459611,-97.2008097964567,-97.1980022717962,-97.1952043103791,-97.1907320435325,-97.1879249824919,-97.1851274835661,-97.18626294968,-97.183455963248,-97.1806584455282,-97.1818412111185,-97.1790437480003,-97.1762369481955,-97.1552916082486,-97.1591746443164,-97.1630671155344,-97.1525992286461,-97.156491661328,-97.1603746289999,-97.1499164088799,-97.1537994328883,-97.1576917020509,-97.1970945428552,-97.2018492714552,-97.206547310005,-97.1967249985431,-97.2014984091627,-97.2061400029505,-97.1963458286036,-97.2011094832488,-97.2057692101587,-97.1498547429544,-97.1537383155787,-97.1576294252288,-97.1471627563636,-97.1510547758329,-97.1549373317478,-97.1444803283189,-97.1483629404273,-97.1522547965624,-97.2019891872507,-97.163473470817,-97.2084276252451,-97.1691206502564,-97.1652424022941,-97.1673589671758,-97.1898660703745,-97.1890888275678,-97.1804131933773,-97.1796653417597,-97.1491652313604,-97.1437907063719,-97.2055503878386],10,null,null,{"interactive":true,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2},null,null,["C1T2P1","C1T2P11","C1T2P21","C1T4P1","C1T4P11","C1T4P21","C1T6P1","C1T6P11","C1T6P21","C2T1P1","C2T1P11","C2T1P21","C2T2P1","C2T2P11","C2T2P21","C2T3P1","C2T3P11","C2T3P21","C3T0P1","C3T0P11","C3T0P21","C3T1P1","C3T1P11","C3T1P21","C3T3P1","C3T3P11","C3T3P21","C4T1P1","C4T1P11","C4T1P21","C4T2P1","C4T2P11","C4T2P21","C4T3P1","C4T3P11","C4T3P21","C5T1P1","C5T1P11","C5T1P21","C5T2P1","C5T2P11","C5T2P21","C5T3P1","C5T3P11","C5T3P21","C6T1P1","C6T1P11","C6T1P21","C6T2P1","C6T2P11","C6T2P21","C6T3P1","C6T3P11","C6T3P21","CB18P10","CB18P11","CB18P12","CB18P13","CB18P14","CB18P15","CB18P26","CB18P27","CB18P28","CB18P29","CB18P30","CB18P32","CB18P9"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLayersControl","args":[["Satellite","Base"],[],{"collapsed":false,"autoZIndex":true,"position":"topright"}]}],"limits":{"lat":[18.1199378409962,18.179342437897],"lng":[-97.2084276252451,-97.1437907063719]}},"evals":[],"jsHooks":[]}</script>
+
+---
+### Datos
+
+
+```r
+# Tabla de funcionamiento de cámaras trampa con coordenadas
+CToperation &lt;- read.csv("Data/CTtable.csv") 
+
+# Usaremos el archivo que creamos en survey report, se llama events_by_station2.csv
+
+freq_reg &lt;- read.csv("Data/surveyReport/events_by_station2.csv")%&gt;% # Llamamos el csv
+ filter(Species== "Odocoileus virginianus") %&gt;%  # Usaremos solo los datos de venados
+  left_join(CToperation, by= "Station") # Unimos para agregar las coordenadas
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; X.x &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Station &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Species &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; n_events &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; X.y &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; utm_x &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; utm_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C1T2P1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Odocoileus virginianus &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 693961 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2009932 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C1T2P11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Odocoileus virginianus &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 693553 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2009643 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C1T2P21 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Odocoileus virginianus &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 693144 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2009355 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C1T4P1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Odocoileus virginianus &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 693673 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2010340 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C1T4P11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Odocoileus virginianus &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 693264 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2010052 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C1T4P21 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Odocoileus virginianus &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 692856 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2009763 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+## Distribución de los registros de 🦌
+
+&lt;img src="index_files/figure-html/unnamed-chunk-10-1.png" width="80%" height="200%" style="display: block; margin: auto;" /&gt;
+
+---
+## Modelando la frecuencia de captura del 🦌
+
+
+```r
+sp_glmdata &lt;- read.csv("Data/covs.csv") %&gt;% # Llamamos las covariables que vamos a usar
+  right_join(freq_reg, by= "Station")# Las unimos con nuestra tabla de número de eventos
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; X &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Station &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Cam &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Habitat &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Cluster &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Vertcover_50 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Dcrops &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; MSAVI &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Slope &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Effort &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Dpop_G &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; X.x &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Species &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; n_events &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; X.y &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; utm_x &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; utm_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C1T2P1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MoultrieA30 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Scrub &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.4744602 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6765368 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.7316819 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.2195550 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.2080680 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.4260974 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Odocoileus virginianus &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 693961 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2009932 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C1T2P11 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Moultrie &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Scrub &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6519157 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.4620448 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.8666152 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.9927301 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -1.4605398 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.3167450 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Odocoileus virginianus &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 693553 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2009643 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C1T2P21 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MoultrieA30 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Scrub &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.9243340 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.2193059 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.5838870 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -1.0258694 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.0719298 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.1805434 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Odocoileus virginianus &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 693144 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2009355 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C1T4P1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Primos &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Columnar &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.9243340 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.4603495 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.1430110 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.4183658 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.8887592 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.1922714 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Odocoileus virginianus &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 693673 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2010340 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+## Modelando la frecuencia de captura del 🦌
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
