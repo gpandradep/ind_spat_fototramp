@@ -54,7 +54,7 @@ style_duo_accent(
 ```
 
 class: inverse, center, bottom
-background-image: url("img/initial.JPG")
+background-image: url("img/initial.jpg")
 background-position: 50% 50%
 background-size: cover
 
