@@ -99,7 +99,17 @@ En cualquier análisis de información espacial la ACS puede influir sobre nuest
 knitr::include_graphics("img/fig1.png")
 ```
 ---
+class: inverse, center
 
+### Primera ley de la grografía
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, out.width="50%", fig.align='center'}
+knitr::include_graphics("img/law.png")
+```
+
+*Tobler W., (1970) "A computer movie simulating urban growth in the Detroit region". Economic Geography, 46(Supplement): 234–240. *
+
+---
 ## ¿ Qué puede causar ACS?
 
 ### Los factores más comúnes son [(Dorman *et al.* 2007)](https://onlinelibrary.wiley.com/doi/10.1111/j.2007.0906-7590.05171.x):
